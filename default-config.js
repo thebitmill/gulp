@@ -9,6 +9,7 @@ const babel = require('rollup-plugin-babel')
 const commonjs = require('rollup-plugin-commonjs')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const marko = require('rollup-plugin-marko')
+const replace = require('rollup-plugin-replace')
 
 const port = fs.existsSync(p.join(PWD, 'server/config/port.js')) ?
   require(p.join(PWD, 'server/config/port')) : null
@@ -87,6 +88,9 @@ module.exports = {
       babel({
         exclude: 'node_modules/**'
       }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(ENV)
+      }),
       nodeResolve({
         jsnext: true,  // Default: false
         main: true,  // Default: true
@@ -95,8 +99,14 @@ module.exports = {
       }),
 
       commonjs({
-        include: [ 'node_modules/**', 'src-admin/**/*.marko', 'src-admin/**/*.marko.js'],
-        exclude: [ 'node_modules/lodash-es/**' ],
+        include: [
+          p.join(PWD, 'node_modules/**'),
+          p.join(PWD, 'client/**/*.marko'),
+          p.join(PWD, 'client/**/*.marko.js')
+        ],
+        exclude: [
+          p.join(PWD, 'node_modules/lodash-es/**')
+        ],
         extensions: [ '.js', '.marko' ],
         sourceMap: true,  // Default: true
         namedExports: {
@@ -132,7 +142,8 @@ module.exports = {
 
   watch: {
     //sass: p.join(PWD, 'assets/sass/**/*.{sass,scss}')
-    less: p.join(PWD, 'assets/less/**/*.less')
+    less: p.join(PWD, 'assets/less/**/*.less'),
+    rollup: p.join(PWD, 'client/**/*.js')
   },
 
   wipe: {
