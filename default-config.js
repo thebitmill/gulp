@@ -28,23 +28,6 @@ module.exports = {
     ]
   },
 
-  browserify: {
-    suffix: true,
-    debug: true,
-    dest: p.join(PWD, 'public/js'),
-    extensions: [ '.js', '.jsx', '.json' ],
-    // PWD/node_modules is added so symlinked ridge does not break. used to
-    // work without this in browserify 9
-    paths: [ p.join(PWD, 'node_modules'), p.join(PWD, 'modules') ],
-    // outputs only need to be used if output names are different from entries.
-    // Otherwise the entries array is copied into the outputs array.
-    entries: [
-      'src/app.js',
-      'src-widget/widget.js'
-    ],
-    src: p.join(PWD, 'src')
-  },
-
   less: {
     suffix: true,
     src: [
@@ -93,7 +76,7 @@ module.exports = {
   },
 
   raster: {
-    src: p.join(PWD, 'img/raster/**/*.{png,gif,jpg}'),
+    src: p.join(PWD, 'assets/raster/**/*.{png,gif,jpg}'),
     dest: p.join(PWD, 'public/img')
   },
 
@@ -124,7 +107,7 @@ module.exports = {
     sourceMap: true,
     dest: p.join(PWD, 'public/js'),
     entries: [
-      'src/app.js'
+      'client/app.js'
     ],
     outputs: [
       'app.js'
@@ -133,12 +116,12 @@ module.exports = {
   },
 
   static: {
-    src: p.join(PWD, 'static/**/*'),
+    src: p.join(PWD, 'assets/static/**/*'),
     dest: p.join(PWD, 'public')
   },
 
   svg: {
-    src: p.join(PWD, 'img/svg/**/*.svg'),
+    src: p.join(PWD, 'assets/svg/**/*.svg'),
     dest: p.join(PWD, 'public/img')
   },
 
@@ -148,8 +131,8 @@ module.exports = {
   }[ENV],
 
   watch: {
-    //sass: p.join(PWD, 'sass/**/*.{sass,scss}')
-    less: p.join(PWD, 'less/**/*.less')
+    //sass: p.join(PWD, 'assets/sass/**/*.{sass,scss}')
+    less: p.join(PWD, 'assets/less/**/*.less')
   },
 
   wipe: {
