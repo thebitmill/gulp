@@ -32,7 +32,7 @@ module.exports = {
   less: {
     suffix: true,
     src: [
-      p.join(PWD, 'less/*.less')
+      p.join(PWD, 'assets/less/*.less')
     ],
     dest: p.join(PWD, 'public/css'),
     autoprefixer: {
