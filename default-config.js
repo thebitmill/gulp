@@ -61,7 +61,7 @@ module.exports = {
     watch: [ 'server' ],
     script: fs.existsSync(p.join(PWD, 'package.json')) ? require(p.join(PWD, 'package.json')).main.replace(/^\./, PWD) : 'server/server.js',
     env: {
-      BABEL_ENV: 'server',
+      BABEL_ENV: 'node',
       // what port you actually put into the browser... when using browser-sync
       // this will differ from the internal port used by express
       EXTERNAL_PORT: 1337,
@@ -72,7 +72,7 @@ module.exports = {
       FORCE_COLOR: true,
       PWD,
       NODE_ENV: ENV,
-      DEBUG: 'newseri:*'
+      //DEBUG: 'midwest:*'
     }
   },
 
