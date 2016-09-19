@@ -10,12 +10,12 @@ const _ = require('lodash');
 // modules > gulp
 const gutil = require('gulp-util');
 
-const localConfigPath = p.join(process.cwd(), 'gulpconfig.js');
+const projectConfigPath = p.join(process.cwd(), 'gulpconfig.js');
 
 try {
-  const localConfig = require(localConfigPath);
+  const localConfig = require(projectConfigPath);
 
-  module.exports = _.mergeWith(require('./default-config'), localConfig, (a, b) => (Array.isArray(a) ? b : undefined));
+  module.exports = _.mergeWith(require('./gulpconfig'), localConfig, (a, b) => (Array.isArray(a) ? b : undefined));
 
   gutil.log(`Local ${chalk.magenta('gulpconfig.js')} found and loaded`);
 } catch (e) {
@@ -23,7 +23,7 @@ try {
     throw e;
   }
 
-  module.exports = require('./default-config');
+  module.exports = require('./gulpconfig');
 
   gutil.log(`${chalk.red.bold('Warning!')} Local ${chalk.magenta('gulpconfig.js')} not found, using default config instead.`);
 }
