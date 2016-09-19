@@ -1,38 +1,38 @@
-'use strict'
+'use strict';
 
 // modules > native
-const p = require('path')
-const fs = require('fs')
+const p = require('path');
+const fs = require('fs');
 
 // modules > rollup
-const babel = require('rollup-plugin-babel')
-const commonjs = require('rollup-plugin-commonjs')
-const nodeResolve = require('rollup-plugin-node-resolve')
-const marko = require('rollup-plugin-marko')
-const replace = require('rollup-plugin-replace')
+const babel = require('rollup-plugin-babel');
+const commonjs = require('rollup-plugin-commonjs');
+const nodeResolve = require('rollup-plugin-node-resolve');
+const marko = require('rollup-plugin-marko');
+const replace = require('rollup-plugin-replace');
 
 const port = fs.existsSync(p.join(PWD, 'server/config/port.js')) ?
-  require(p.join(PWD, 'server/config/port')) : null
+  require(p.join(PWD, 'server/config/port')) : null;
 
 module.exports = {
   browserSync: {
     browser: null,
     ghostMode: false,
-    proxy: 'localhost:' + (port || 3000),
+    proxy: `localhost:${port || 3000}`,
     port: 1337,
     ui: {
-      port: 1338
+      port: 1338,
     },
     files: [
       p.join(PWD, 'public/css/**/*.css'),
       p.join(PWD, 'public/js/**/*.js'),
-    ]
+    ],
   },
 
   less: {
     suffix: true,
     src: [
-      p.join(PWD, 'assets/less/*.less')
+      p.join(PWD, 'assets/less/*.less'),
     ],
     dest: p.join(PWD, 'public/css'),
     autoprefixer: {
@@ -43,22 +43,22 @@ module.exports = {
         'opera >= 12.1',
         'firefox >= 17',
         'chrome >= 30',
-        'android >= 4'
+        'android >= 4',
       ],
-      cascade: true
+      cascade: true,
     },
     functions: require(p.join(process.cwd(), 'gulp/less/functions')),
     options: {
       paths: [
-        p.join(PWD, 'node_modules/spineless/less')
+        p.join(PWD, 'node_modules/spineless/less'),
       ],
-    }
+    },
   },
 
   nodemon: {
     ext: 'js,jade,marko',
-    ignore: [ '*.marko.js' ],
-    watch: [ 'server' ],
+    ignore: ['*.marko.js'],
+    watch: ['server'],
     script: fs.existsSync(p.join(PWD, 'package.json')) ? require(p.join(PWD, 'package.json')).main.replace(/^\./, PWD) : 'server/server.js',
     env: {
       BABEL_ENV: 'node',
@@ -73,12 +73,12 @@ module.exports = {
       PWD,
       NODE_ENV: ENV,
       //DEBUG: 'midwest:*'
-    }
+    },
   },
 
   raster: {
     src: p.join(PWD, 'assets/raster/**/*.{png,gif,jpg}'),
-    dest: p.join(PWD, 'public/img')
+    dest: p.join(PWD, 'public/img'),
   },
 
   rollup: {
@@ -86,67 +86,67 @@ module.exports = {
     plugins: [
       marko(),
       babel({
-        exclude: 'node_modules/**'
+        exclude: 'node_modules/**',
       }),
       replace({
-        'process.env.NODE_ENV': JSON.stringify(ENV)
+        'process.env.NODE_ENV': JSON.stringify(ENV),
       }),
       nodeResolve({
         jsnext: true,  // Default: false
         main: true,  // Default: true
         browser: true,  // Default: false
-        preferBuiltins: false
+        preferBuiltins: false,
       }),
 
       commonjs({
         include: [
           p.join(PWD, 'node_modules/**'),
           p.join(PWD, 'client/**/*.marko'),
-          p.join(PWD, 'client/**/*.marko.js')
+          p.join(PWD, 'client/**/*.marko.js'),
         ],
         exclude: [
-          p.join(PWD, 'node_modules/lodash-es/**')
+          p.join(PWD, 'node_modules/lodash-es/**'),
         ],
-        extensions: [ '.js', '.marko' ],
+        extensions: ['.js', '.marko'],
         sourceMap: true,  // Default: true
         namedExports: {
-          'node_modules/react/react.js': ['PropTypes', 'createElement']
-        }
+          'node_modules/react/react.js': ['PropTypes', 'createElement'],
+        },
       }),
     ],
     sourceMap: true,
     dest: p.join(PWD, 'public/js'),
     entries: [
-      'client/app.js'
+      'client/app.js',
     ],
     outputs: [
-      'app.js'
+      'app.js',
     ],
     format: 'iife',
   },
 
   static: {
     src: p.join(PWD, 'assets/static/**/*'),
-    dest: p.join(PWD, 'public')
+    dest: p.join(PWD, 'public'),
   },
 
   svg: {
     src: p.join(PWD, 'assets/svg/**/*.svg'),
-    dest: p.join(PWD, 'public/img')
+    dest: p.join(PWD, 'public/img'),
   },
 
   tasks: {
-    development: [ 'wipe', [ 'raster', 'less', 'rollup', 'static', 'svg' ], [ 'nodemon' ], [ 'watch', 'browser-sync' ] ],
-    production: [ 'wipe', [ 'raster', 'less', 'rollup', 'static', 'svg' ]]
+    development: ['wipe', ['raster', 'less', 'rollup', 'static', 'svg'], ['nodemon'], ['watch', 'browser-sync']],
+    production: ['wipe', ['raster', 'less', 'rollup', 'static', 'svg']],
   }[ENV],
 
   watch: {
-    //sass: p.join(PWD, 'assets/sass/**/*.{sass,scss}')
+    // sass: p.join(PWD, 'assets/sass/**/*.{sass,scss}')
     less: p.join(PWD, 'assets/less/**/*.less'),
-    rollup: p.join(PWD, 'client/**/*.js')
+    rollup: p.join(PWD, 'client/**/*.js'),
   },
 
   wipe: {
-    src: [ p.join(PWD, 'public') ]
+    src: [p.join(PWD, 'public')],
   },
-}
+};

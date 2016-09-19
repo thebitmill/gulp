@@ -1,44 +1,45 @@
-'use strict'
+'use strict';
 
 // native modules
-const fs = require('fs')
+const fs = require('fs');
 
 // 3rd party modules
-const mkdirp = require('mkdirp')
-const chalk = require('chalk')
-const gulp = require('gulp')
-const gutil = require('gulp-util')
-const rimraf = require('rimraf')
+const mkdirp = require('mkdirp');
+const chalk = require('chalk');
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const rimraf = require('rimraf');
 
-const TASK_NAME = 'wipe'
+const TASK_NAME = 'wipe';
 
-const config = require('../config').wipe
+const config = require('../config').wipe;
 
 gulp.task(TASK_NAME, (cb) => {
-  let count = 0
+  let count = 0;
   config.src.forEach((folder) => {
     fs.exists(folder, (exists) => {
       if (exists) {
         rimraf(folder, (err) => {
-          if (err) throw err
-          gutil.log('Folder ' + chalk.magenta(folder) + ' removed')
+          if (err) throw err;
+          gutil.log(`Folder ${chalk.magenta(folder)} removed`);
 
-          mkdirp.sync(folder)
+          mkdirp.sync(folder);
 
-          count++
+          count += 1;
+
           if (count >= config.src.length) {
-            cb()
+            cb();
           }
-        })
+        });
       } else {
-        count++
+        count += 1;
 
-        mkdirp.sync(folder)
+        mkdirp.sync(folder);
 
         if (count >= config.src.length) {
-          cb()
+          cb();
         }
       }
-    })
-  })
-})
+    });
+  });
+});

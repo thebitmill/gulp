@@ -45,6 +45,7 @@
     "gulp-svgmin": "^1.2.3",
     "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
+    "less": "^2.7.1",
     "lodash": "^4.15.0",
     "marko": "^3.10.1",
     "mkdirp": "^0.5.1",
