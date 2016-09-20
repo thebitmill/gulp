@@ -31,40 +31,38 @@ config.entries = config.entries || [config.entry];
  *  if (filesInBundle.includes(file)) etc etc
  * }
  */
-gulp.task(TASK_NAME, (cb) => {
-  let count = 0;
+function task(entry, index, cb) {
+  const output = (config.outputs && config.outputs[index]) || entry.replace(/^[^\/]+\//, '');
 
-  function done(err) {
-    if (err) cb(err);
+  rollup(Object.assign(_.omit(config, 'suffix', 'entries', 'entry', 'outputs'), {
+    entry,
+    cache: cache[entry],
+  }))
+    .catch((err) => {
+      // TODO make this not exit gulp process
+      cb(new gutil.PluginError(TASK_NAME, err));
+    })
+    .then((bundle) => {
+      cache[entry] = bundle;
 
-    count += 1;
+      const count = bundle.modules.filter(module => !module.id.startsWith('\u0000commonjs-proxy')).length;
 
-    if (count >= config.entries.length) {
+      gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(output)}.`);
+
+      bundle.write(Object.assign({
+        dest: p.join(config.dest, output),
+      }, _.omit(config, 'dest')));
+
       cb();
-    }
-  }
+    });
+}
 
-  config.entries.forEach((entry, index) => {
-    const output = (config.outputs && config.outputs[index]) || entry.replace(/^[^\/]+\//, '');
+const tasks = [];
 
-    rollup(Object.assign(_.omit(config, 'suffix', 'entries', 'entry', 'outputs'), {
-      entry,
-      cache: cache[entry],
-    }))
-      .catch((err) => {
-        // TODO make this not exit gulp process
-        done(new gutil.PluginError(TASK_NAME, err));
-      })
-      .then((bundle) => {
-        cache[entry] = bundle;
-
-        gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(bundle.modules.length)} modules into ${chalk.magenta(output)}.`);
-
-        bundle.write(Object.assign({
-          dest: p.join(config.dest, output),
-        }, _.omit(config, 'dest')));
-
-        done();
-      });
-  });
+config.entries.forEach((entry, index) => {
+  const taskName = `${TASK_NAME}:${entry}`;
+  tasks.push(taskName);
+  gulp.task(taskName, task.bind(null, entry, index));
 });
+
+gulp.task(TASK_NAME, gulp.parallel(tasks));

@@ -56,7 +56,7 @@ module.exports = {
   },
 
   nodemon: {
-    ext: 'js,jade,marko',
+    ext: 'js,marko',
     ignore: ['*.marko.js'],
     watch: ['server'],
     script: fs.existsSync(p.join(PWD, 'package.json')) ? require(p.join(PWD, 'package.json')).main.replace(/^\./, PWD) : 'server/server.js',
@@ -141,9 +141,7 @@ module.exports = {
   }[ENV],
 
   watch: {
-    // sass: p.join(PWD, 'assets/sass/**/*.{sass,scss}')
     less: p.join(PWD, 'assets/less/**/*.less'),
-    rollup: p.join(PWD, 'client/**/*.js'),
   },
 
   wipe: {
