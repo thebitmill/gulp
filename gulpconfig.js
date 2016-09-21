@@ -106,6 +106,7 @@ module.exports = {
         ],
         exclude: [
           p.join(PWD, 'node_modules/lodash-es/**'),
+          p.join(PWD, 'node_modules/symbol-observable/**'),
         ],
         extensions: ['.js', '.marko'],
         sourceMap: true,  // Default: true
