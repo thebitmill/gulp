@@ -2,6 +2,15 @@
 
 const p = require('path');
 
+function getVariable(frames) {
+  for (let i = 0; i < frames.length; i++) {
+    const frame = frames[i];
+
+    if (frame._variables && frame._variables['@base-font-size'])
+      return parseInt(frame._variables['@base-font-size'].value.value[0].value[0].value, 10);
+  }
+}
+
 module.exports = {
   'img-url': function imgUrl(value) {
     const tree = this.context.pluginManager.less.tree;
@@ -12,17 +21,19 @@ module.exports = {
   rem(value) {
     const tree = this.context.pluginManager.less.tree;
 
+    const baseFontSize = getVariable(this.context.frames);
+
     if (value.type === 'Expression') {
       return new tree.Expression(value.value.map((v) => {
         if (v.unit.backupUnit === 'px') {
-          return new tree.Dimension(v.value / 14, 'rem');
+          return new tree.Dimension(v.value / baseFontSize, 'rem');
         }
 
         return new tree.Dimension(v.value, 'rem');
       }));
     }
 
-    return new tree.Dimension(value.value / 14, 'rem');
+    return new tree.Dimension(value.value / baseFontSize, 'rem');
   },
 
   px(value) {
@@ -34,7 +45,7 @@ module.exports = {
           return v;
         }
 
-        return new tree.Dimension(value.value * 14, 'px');
+        return new tree.Dimension(value.value * baseFontSize, 'px');
       }));
     }
 
@@ -42,6 +53,6 @@ module.exports = {
       return value;
     }
 
-    return new tree.Dimension(value.value * 14, 'px');
+    return new tree.Dimension(value.value * baseFontSize, 'px');
   },
 };
