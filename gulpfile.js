@@ -18,7 +18,7 @@ const args = process.argv.slice(2);
 
 // use tasks from arguments list if present, otherwise use tasks from
 // configuration (environment specific)
-let { tasks } = args.length > 0 ? args : require('./config');
+let tasks = args.length > 0 ? args : require('./config').tasks;
 
 // only require used tasks
 _.flatten(tasks, true).forEach(task => require(`./tasks/${task}`));
