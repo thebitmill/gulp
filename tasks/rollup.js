@@ -2,6 +2,7 @@
 
 // modules > native
 const p = require('path');
+const fs = require('fs');
 
 // modules > 3rd party
 const _ = require('lodash');
@@ -14,8 +15,6 @@ const { rollup } = require('rollup');
 // const sourcemaps = require('gulp-sourcemaps')
 
 const { rollup: config } = require('../config');
-
-process.env.BABEL_ENV = 'rollup';
 
 const TASK_NAME = 'rollup';
 
@@ -31,6 +30,7 @@ config.entries = config.entries || [config.entry];
  *  if (filesInBundle.includes(file)) etc etc
  * }
  */
+
 function task(entry, index, cb) {
   const output = (config.outputs && config.outputs[index]) || entry.replace(/^[^\/]+\//, '');
 
@@ -50,8 +50,9 @@ function task(entry, index, cb) {
       gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(output)}.`);
 
       bundle.write(Object.assign({
+        moduleName: output,
         dest: p.join(config.dest, output),
-      }, _.omit(config, 'dest')));
+      }, _.omit(config, 'suffix', 'dest', 'entries', 'entry', 'outputs')));
 
       cb();
     });

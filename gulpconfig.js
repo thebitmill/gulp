@@ -1,5 +1,6 @@
 'use strict';
 
+
 // modules > native
 const p = require('path');
 const fs = require('fs');
@@ -14,7 +15,15 @@ const replace = require('rollup-plugin-replace');
 const port = fs.existsSync(p.join(PWD, 'server/config/port.js')) ?
   require(p.join(PWD, 'server/config/port')) : null;
 
+const babelrc = JSON.parse(fs.readFileSync(p.join(PWD, '.babelrc')));
+
 module.exports = {
+  babel: {
+    src: 'client/**/*.{js,jsx}',
+    dest: 'build',
+    babel: babelrc.env['node-jsx'],
+  },
+
   browserSync: {
     browser: null,
     ghostMode: false,
@@ -56,9 +65,11 @@ module.exports = {
   },
 
   nodemon: {
-    ext: 'js,marko',
-    ignore: ['*.marko.js'],
-    watch: ['server'],
+    ext: 'js',
+    watch: [
+      'server',
+      'build',
+    ],
     script: fs.existsSync(p.join(PWD, 'package.json')) ? require(p.join(PWD, 'package.json')).main.replace(/^\./, PWD) : 'server/server.js',
     env: {
       BABEL_ENV: 'node',
@@ -85,9 +96,7 @@ module.exports = {
     suffix: true,
     plugins: [
       marko(),
-      babel({
-        exclude: 'node_modules/**',
-      }),
+      babel(babelrc.env.rollup),
       replace({
         'process.env.NODE_ENV': JSON.stringify(ENV),
       }),
@@ -137,15 +146,19 @@ module.exports = {
   },
 
   tasks: {
-    development: ['wipe', ['raster', 'less', 'rollup', 'static', 'svg'], ['nodemon'], ['watch', 'browser-sync']],
-    production: ['wipe', ['raster', 'less', 'rollup', 'static', 'svg']],
+    development: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg'], ['nodemon'], ['watch', 'browser-sync']],
+    production: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg']],
   }[ENV],
 
   watch: {
+    babel: p.join(PWD, 'client/**/*.{js,jsx}'),
     less: p.join(PWD, 'assets/less/**/*.less'),
   },
 
   wipe: {
-    src: [p.join(PWD, 'public')],
+    src: [
+      p.join(PWD, 'build'),
+      p.join(PWD, 'public'),
+    ],
   },
 };
