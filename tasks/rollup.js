@@ -50,7 +50,7 @@ function task(entry, index, cb) {
       gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(output)}.`);
 
       bundle.write(Object.assign({
-        moduleName: output,
+        // moduleName: output,
         dest: p.join(config.dest, output),
       }, _.omit(config, 'suffix', 'dest', 'entries', 'entry', 'outputs')));
 
