@@ -64,7 +64,8 @@ module.exports = {
   },
 
   nodemon: {
-    ext: 'js',
+    ext: 'js,jsx,marko',
+    ignore: '*.marko.js',
     watch: [
       'server',
       'build',
