@@ -9,7 +9,6 @@ const fs = require('fs');
 const babel = require('rollup-plugin-babel');
 const commonjs = require('rollup-plugin-commonjs');
 const nodeResolve = require('rollup-plugin-node-resolve');
-const marko = require('rollup-plugin-marko');
 const replace = require('rollup-plugin-replace');
 
 const port = fs.existsSync(p.join(PWD, 'server/config/port.js')) ?
@@ -95,7 +94,6 @@ module.exports = {
   rollup: {
     suffix: true,
     plugins: [
-      marko(),
       babel(babelrc.env.rollup),
       replace({
         'process.env.NODE_ENV': JSON.stringify(ENV),
@@ -110,8 +108,6 @@ module.exports = {
       commonjs({
         include: [
           p.join(PWD, 'node_modules/**'),
-          p.join(PWD, 'client/**/*.marko'),
-          p.join(PWD, 'client/**/*.marko.js'),
         ],
         exclude: [
           p.join(PWD, 'node_modules/lodash-es/**'),
