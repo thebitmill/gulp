@@ -144,6 +144,7 @@ module.exports = {
 
   tasks: {
     development: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg'], ['nodemon'], ['watch', 'browser-sync']],
+    staging: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg']],
     production: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg']],
   }[ENV],
 
