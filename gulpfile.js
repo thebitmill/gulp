@@ -21,7 +21,7 @@ const args = process.argv.slice(2);
 let tasks = args.length > 0 ? args : require('./config').tasks;
 
 // only require used tasks
-_.flatten(tasks, true).forEach(task => require(`./tasks/${task}`));
+_.flatten(tasks, true).forEach((task) => require(`./tasks/${task}`));
 
 tasks = tasks.map((task) => {
   if (Array.isArray(task)) {

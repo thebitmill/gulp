@@ -15,7 +15,7 @@ const bounPrefix = `[${chalk.yellow('BOUN')}] `;
 // const errorPrefix = `[${chalk.red('ERROR')}] `;
 
 function writePackage(pkg) {
-  fs.writeFileSync(p.join(PWD, 'package.json'), JSON.stringify(pkg, null, '  ') + '\n');
+  fs.writeFileSync(p.join(PWD, 'package.json'), `${JSON.stringify(pkg, null, '  ')}\n`);
 }
 
 function dependencies() {
@@ -42,4 +42,4 @@ function dependencies() {
   writePackage(appPkg);
 }
 
-return dependencies()
+return dependencies();

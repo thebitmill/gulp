@@ -45,7 +45,7 @@ function task(entry, index, cb) {
     .then((bundle) => {
       cache[entry] = bundle;
 
-      const count = bundle.modules.filter(module => !module.id.startsWith('\u0000commonjs-proxy')).length;
+      const count = bundle.modules.filter((module) => !module.id.startsWith('\u0000commonjs-proxy')).length;
 
       gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(output)}.`);
 

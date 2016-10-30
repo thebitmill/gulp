@@ -7,7 +7,7 @@ function getVariable(frames) {
     const frame = frames[i];
 
     if (frame._variables && frame._variables['@base-font-size'])
-      return parseInt(frame._variables['@base-font-size'].value.value[0].value[0].value, 10);
+      { return parseInt(frame._variables['@base-font-size'].value.value[0].value[0].value, 10); }
   }
 }
 
