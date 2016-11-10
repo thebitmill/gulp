@@ -25,7 +25,7 @@ function dependencies() {
   console.info(`${bounPrefix}Adding dependencies from ${chalk.green('gulp')}`);
   console.log(_.toPairs(gulpPkg.dependencies).map((arr) => (`- ${arr[0]}@${arr[1]}`)).join('\n'));
 
-  Object.assign(appPkg.devDependencies, gulpPkg.dependencies);
+  appPkg.devDependencies = Object.assign(appPkg.devDependencies || {}, gulpPkg.dependencies);
 
   appPkg.devDependencies = _.fromPairs(_.toPairs(appPkg.devDependencies).sort((a, b) => {
     if (a[0] < b[0]) {
