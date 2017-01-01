@@ -58,7 +58,6 @@ module.exports = {
     ignore: '*.marko.js',
     watch: [
       'server',
-      'build',
     ],
     script: fs.existsSync(p.join(PWD, 'package.json')) ? require(p.join(PWD, 'package.json')).main.replace(/^\./, PWD) : 'server/server.js',
     env: {
