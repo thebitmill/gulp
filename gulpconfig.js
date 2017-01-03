@@ -43,18 +43,6 @@ module.exports = {
       p.join(PWD, 'assets/less/*.less'),
     ],
     dest: p.join(PWD, 'public/css'),
-    autoprefixer: {
-      browsers: [
-        'safari >= 5',
-        'ie >= 8',
-        'ios >= 6',
-        'opera >= 12.1',
-        'firefox >= 17',
-        'chrome >= 30',
-        'android >= 4',
-      ],
-      cascade: true,
-    },
     functions: require(p.join(process.cwd(), 'gulp/less/functions')),
     options: {
       paths: [
@@ -84,6 +72,21 @@ module.exports = {
       PWD,
       NODE_ENV: ENV,
       //DEBUG: 'midwest:*'
+    },
+  },
+
+  postcss: {
+    autoprefixer: {
+      browsers: [
+        'safari >= 5',
+        'ie >= 8',
+        'ios >= 6',
+        'opera >= 12.1',
+        'firefox >= 17',
+        'chrome >= 30',
+        'android >= 4',
+      ],
+      cascade: true,
     },
   },
 
@@ -130,6 +133,21 @@ module.exports = {
       'app.js',
     ],
     format: 'iife',
+  },
+
+  sass: {
+    src: p.join(PWD, 'assets/sass/*.{sass,scss}'),
+    dest: p.join(PWD, 'public/css'),
+    suffix: true,
+    options: {
+      outputStyle: 'nested',
+      includePaths: [
+        p.join(PWD, 'node_modules/spysass/sass'),
+        p.join(PWD, 'node_modules/susy/sass'),
+        p.join(PWD, 'node_modules/breakpoint-sass/sass')
+      ],
+      imagePath: '../img',
+    }
   },
 
   static: {
