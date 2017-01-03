@@ -12,7 +12,7 @@ const { watch, rollup } = require('../config');
 
 gulp.task(TASK_NAME, () => {
   _.forIn(watch, (value, key) => {
-    gulp.watch(value, gulp.series(key));
+    if (value) gulp.watch(value, gulp.series(key));
   });
 
   _.forEach(rollup.entries, (entry) => {
