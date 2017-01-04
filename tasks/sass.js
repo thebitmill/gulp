@@ -43,13 +43,9 @@ if (ENV === 'production') {
   processors.push(csswring(postcss.csswring));
 }
 
-// config.sass.options.onError = gulp.errorHandler;
-
-const suffix = '-' + Date.now().toString(16);
-
 gulp.task('sass', () => {
   if (sassConfig.suffix)
-    fs.writeFile(sassConfig.dest + '.json', JSON.stringify({ suffix }));
+    fs.writeFile(sassConfig.dest + '.json', JSON.stringify({ suffix: sassConfig.suffix }));
 
   let pipe = gulp.src(sassConfig.src)
     .pipe(sourcemaps.init())
@@ -57,7 +53,7 @@ gulp.task('sass', () => {
     .pipe(postcss(processors));
 
   if (sassConfig.suffix)
-    pipe = pipe.pipe(rename({ suffix }));
+    pipe = pipe.pipe(rename({ suffix: sassConfig.suffix }));
 
   return pipe.pipe(sourcemaps.write('./maps'))
     .pipe(gulp.dest(sassConfig.dest));

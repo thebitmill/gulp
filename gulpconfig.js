@@ -16,6 +16,8 @@ const port = fs.existsSync(p.join(PWD, 'server/config/port.js')) ?
 
 const babelrc = JSON.parse(fs.readFileSync(p.join(PWD, '.babelrc')));
 
+const suffix = `-${Date.now().toString(16)}`;
+
 module.exports = {
   babel: {
     src: 'client/**/*.{js,jsx}',
@@ -38,7 +40,7 @@ module.exports = {
   },
 
   less: {
-    suffix: true,
+    suffix,
     src: [
       p.join(PWD, 'assets/less/*.less'),
     ],
@@ -96,7 +98,7 @@ module.exports = {
   },
 
   rollup: {
-    suffix: true,
+    suffix,
     plugins: [
       babel(babelrc.env.rollup),
       replace({
@@ -138,7 +140,7 @@ module.exports = {
   sass: {
     src: p.join(PWD, 'assets/sass/*.{sass,scss}'),
     dest: p.join(PWD, 'public/css'),
-    suffix: true,
+    suffix,
     options: {
       outputStyle: 'nested',
       includePaths: [

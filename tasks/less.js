@@ -13,8 +13,6 @@ const autoprefixer = require('autoprefixer');
 
 const config = require('../config').less;
 
-const suffix = `-${Date.now().toString(16)}`;
-
 const errorHandler = require('../util/error-handler');
 
 lessModule.functions.functionRegistry.addMultiple(config.functions);
@@ -33,7 +31,7 @@ gulp.task('less', () => {
   mkdirp(config.dest);
 
   if (config.suffix) {
-    fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix }));
+    fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }));
   }
 
   let pipe = gulp.src(config.src)
@@ -42,7 +40,7 @@ gulp.task('less', () => {
     .pipe(postcss(processors));
 
   if (config.suffix) {
-    pipe = pipe.pipe(rename({ suffix }));
+    pipe = pipe.pipe(rename({ suffix: config.suffix }));
   }
 
   return pipe.pipe(sourcemaps.write('./maps'))
