@@ -2,13 +2,26 @@
 
 const p = require('path');
 
+function getValue(obj) {
+  if (obj.value) {
+    if (obj.value[0]) return getValue(obj.value[0]);
+
+    return getValue(obj.value);
+  } 
+
+  return obj;
+}
+
 function getVariable(frames) {
   for (let i = 0; i < frames.length; i++) {
     const frame = frames[i];
 
-    if (frame._variables && frame._variables['@base-font-size'])
-      { return parseInt(frame._variables['@base-font-size'].value.value[0].value[0].value, 10); }
+    if (frame._variables && frame._variables['@base-font-size']) {
+      return getValue(frame._variables['@base-font-size']);
+    }
   }
+
+  return undefined;
 }
 
 module.exports = {
@@ -38,6 +51,8 @@ module.exports = {
 
   px(value) {
     const tree = this.context.pluginManager.less.tree;
+
+    const baseFontSize = getVariable(this.context.frames);
 
     if (value.type === 'Expression') {
       return new tree.Expression(value.value.map((v) => {
