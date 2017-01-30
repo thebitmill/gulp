@@ -108,6 +108,7 @@ module.exports = {
         main: true,  // Default: true
         browser: true,  // Default: false
         preferBuiltins: false,
+        extensions: ['.js', '.jsx'],
       }),
 
       commonjs({
