@@ -44,5 +44,6 @@ gulp.task('less', () => {
   }
 
   return pipe.pipe(sourcemaps.write('./maps'))
+    // .on('error', errorHandler)
     .pipe(gulp.dest(config.dest));
 });

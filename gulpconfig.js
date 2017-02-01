@@ -127,9 +127,10 @@ module.exports = {
       }),
     ],
     sourceMap: true,
+    src: p.join(PWD, 'client'),
     dest: p.join(PWD, 'public/js'),
     entries: [
-      'client/app.js',
+      'app.js',
     ],
     outputs: [
       'app.js',

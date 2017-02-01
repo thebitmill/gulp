@@ -2,17 +2,20 @@
 
 // modules > native
 const p = require('path');
-const fs = require('fs');
 
 // modules > 3rd party
 const _ = require('lodash');
 const chalk = require('chalk');
+const serializeError = require('serialize-error');
 
 // modules > gulp
 const gulp = require('gulp');
 const gutil = require('gulp-util');
 const { rollup } = require('rollup');
 // const sourcemaps = require('gulp-sourcemaps')
+
+// modules > local
+const errorHandler = require('../util/error-handler');
 
 const { rollup: config } = require('../config');
 
@@ -32,16 +35,12 @@ config.entries = config.entries || [config.entry];
  */
 
 function task(entry, index, cb) {
-  const output = (config.outputs && config.outputs[index]) || entry.replace(/^[^\/]+\//, '');
+  const output = (config.outputs && config.outputs[index]) || entry;
 
-  rollup(Object.assign(_.omit(config, 'suffix', 'entries', 'entry', 'outputs'), {
-    entry,
+  rollup(Object.assign(_.omit(config, 'src', 'suffix', 'entries', 'entry', 'outputs'), {
+    entry: p.join(config.src, entry),
     cache: cache[entry],
   }))
-    .catch((err) => {
-      // TODO make this not exit gulp process
-      cb(new gutil.PluginError(TASK_NAME, err));
-    })
     .then((bundle) => {
       cache[entry] = bundle;
 
@@ -55,7 +54,17 @@ function task(entry, index, cb) {
       }, _.omit(config, 'suffix', 'dest', 'entries', 'entry', 'outputs')));
 
       cb();
-    });
+    })
+    .catch((err) => {
+      err = Object.assign(serializeError(err), {
+        task: `${TASK_NAME}:${entry}`,
+      });
+
+      errorHandler(err);
+
+      cb();
+    })
+    ;
 }
 
 const tasks = [];
