@@ -164,10 +164,15 @@ module.exports = {
   },
 
   tasks: {
-    development: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg'], ['nodemon'], ['watch', 'browser-sync']],
-    staging: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg']],
-    production: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg']],
+    development: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg', 'video'], ['nodemon'], ['watch', 'browser-sync']],
+    staging: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg', 'video']],
+    production: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg', 'video']],
   }[ENV],
+
+  video: {
+    src: p.join(PWD, 'assets/video/**/*'),
+    dest: p.join(PWD, 'public/video'),
+  },
 
   watch: {
     babel: p.join(PWD, 'client/**/*.{js,jsx}'),
