@@ -34,11 +34,20 @@ config.entries = config.entries || [config.entry];
  * }
  */
 
-function task(entry, index, cb) {
-  const output = (config.outputs && config.outputs[index]) || entry;
+// modules > rollup
+const pluginConstructors = {
+  babel: require('rollup-plugin-babel'),
+  commonjs: require('rollup-plugin-commonjs'),
+  nodeResolve: require('rollup-plugin-node-resolve'),
+  replace: require('rollup-plugin-replace'),
+};
 
-  rollup(Object.assign(_.omit(config, 'src', 'suffix', 'entries', 'entry', 'outputs'), {
-    entry: p.join(config.src, entry),
+
+const omitKeys = ['src', 'suffix', 'entries', 'entry', 'output', 'outputs'];
+
+function task(entry, entryConfig, cb) {
+  rollup(Object.assign(_.omit(entryConfig, omitKeys), {
+    entry: p.join(entryConfig.src, entry),
     cache: cache[entry],
   }))
     .then((bundle) => {
@@ -46,11 +55,12 @@ function task(entry, index, cb) {
 
       const count = bundle.modules.filter((module) => !module.id.startsWith('\u0000commonjs-proxy')).length;
 
-      gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(output)}.`);
+      gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(entryConfig.output)}.`);
 
       bundle.write(Object.assign({
         // moduleName: output,
-        dest: p.join(config.dest, output),
+        dest: p.join(entryConfig.dest, entryConfig.output),
+      // }, _.omit(entryConfig, omitKeys.slice(1))));
       }, _.omit(config, 'suffix', 'dest', 'entries', 'entry', 'outputs')));
 
       cb();
@@ -67,12 +77,39 @@ function task(entry, index, cb) {
     ;
 }
 
-const tasks = [];
 
-config.entries.forEach((entry, index) => {
-  const taskName = `${TASK_NAME}:${entry}`;
-  tasks.push(taskName);
-  gulp.task(taskName, task.bind(null, entry, index));
+const tasks = config.entries.map((entry, index) => {
+  let taskName;
+  let entryConfig;
+  let output;
+
+  if (Array.isArray(entry)) {
+    taskName = `${TASK_NAME}:${entry[0]}`;
+    output = (entry[1].output || config.outputs && config.outputs[index]) || entry[0];
+    entryConfig = _.merge(entry[1], _.omit(config, ['entries', 'outputs']));
+    entry = entry[0];
+  } else {
+    taskName = `${TASK_NAME}:${entry}`;
+    entryConfig = config;
+    output = (entryConfig.outputs && entryConfig.outputs[index]) || entry;
+  }
+
+
+  const plugins = _.map(entryConfig.plugins, (pluginConfig, key) => {
+    if (_.isPlainObject(pluginConfig)) {
+      if (!pluginConstructors[key]) {
+        throw new Error(`Unknown plugin "${key}"`);
+      }
+
+      return pluginConstructors[key](pluginConfig);
+    }
+
+    return pluginConfig;
+  });
+
+  gulp.task(taskName, task.bind(null, entry, Object.assign({}, entryConfig, { plugins, output })));
+
+  return taskName;
 });
 
 gulp.task(TASK_NAME, gulp.parallel(tasks));

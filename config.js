@@ -15,9 +15,10 @@ const projectConfigPath = p.join(process.cwd(), 'gulpconfig.js');
 try {
   const localConfig = require(projectConfigPath);
 
+  // what, why?
   module.exports = _.mergeWith(require('./gulpconfig'), localConfig, (a, b) => (Array.isArray(a) ? b : undefined));
 
-  gutil.log(`Local ${chalk.magenta('gulpconfig.js')} found and loaded`);
+  gutil.log(`Local ${chalk.magenta('gulpconfig.js')} found and merged with default config`);
 } catch (e) {
   if (e.message && !e.message.startsWith('Cannot find module')) {
     throw e;

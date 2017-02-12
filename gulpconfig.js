@@ -5,12 +5,6 @@
 const p = require('path');
 const fs = require('fs');
 
-// modules > rollup
-const babel = require('rollup-plugin-babel');
-const commonjs = require('rollup-plugin-commonjs');
-const nodeResolve = require('rollup-plugin-node-resolve');
-const replace = require('rollup-plugin-replace');
-
 const port = fs.existsSync(p.join(PWD, 'server/config/port.js')) ?
   require(p.join(PWD, 'server/config/port')) : null;
 
@@ -98,20 +92,21 @@ module.exports = {
 
   rollup: {
     suffix,
-    plugins: [
-      babel(babelrc.env.rollup),
-      replace({
+    plugins: {
+      babel: babelrc.env.rollup,
+      replace: {
         'process.env.NODE_ENV': JSON.stringify(ENV),
-      }),
-      nodeResolve({
+      },
+
+      nodeResolve: {
         jsnext: true,  // Default: false
         main: true,  // Default: true
         browser: true,  // Default: false
         preferBuiltins: false,
         extensions: ['.js', '.jsx'],
-      }),
+      },
 
-      commonjs({
+      commonjs: {
         include: [
           p.join(PWD, 'node_modules/**'),
         ],
@@ -119,13 +114,13 @@ module.exports = {
           p.join(PWD, 'node_modules/lodash-es/**'),
           p.join(PWD, 'node_modules/symbol-observable/**'),
         ],
-        extensions: ['.js', '.marko'],
+        extensions: ['.js'],
         sourceMap: true,  // Default: true
         namedExports: {
-          'node_modules/react/react.js': ['PropTypes', 'createElement'],
+          'node_modules/react/react.js': ['Component', 'Children', 'PropTypes', 'createElement'],
         },
-      }),
-    ],
+      },
+    },
     sourceMap: true,
     src: p.join(PWD, 'client'),
     dest: p.join(PWD, 'public/js'),
@@ -147,10 +142,10 @@ module.exports = {
       includePaths: [
         p.join(PWD, 'node_modules/spysass/sass'),
         p.join(PWD, 'node_modules/susy/sass'),
-        p.join(PWD, 'node_modules/breakpoint-sass/sass')
+        p.join(PWD, 'node_modules/breakpoint-sass/sass'),
       ],
       imagePath: '../img',
-    }
+    },
   },
 
   static: {
