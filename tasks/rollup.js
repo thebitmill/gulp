@@ -86,7 +86,7 @@ const tasks = config.entries.map((entry, index) => {
   if (Array.isArray(entry)) {
     taskName = `${TASK_NAME}:${entry[0]}`;
     output = (entry[1].output || config.outputs && config.outputs[index]) || entry[0];
-    entryConfig = _.merge(entry[1], _.omit(config, ['entries', 'outputs']));
+    entryConfig = _.mergeWith(_.omit(config, ['entries', 'outputs']), entry[1], (a, b) => (Array.isArray(a) ? b : undefined));
     entry = entry[0];
   } else {
     taskName = `${TASK_NAME}:${entry}`;
