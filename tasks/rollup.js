@@ -104,6 +104,7 @@ const tasks = config.entries.map((entry, index) => {
       return pluginConstructors[key](pluginConfig);
     }
 
+    // assuming pluginConfig is actually an initialized plugin
     return pluginConfig;
   });
 
