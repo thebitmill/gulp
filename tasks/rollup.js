@@ -43,7 +43,7 @@ const pluginConstructors = {
 };
 
 
-const omitKeys = ['src', 'suffix', 'entries', 'entry', 'output', 'outputs'];
+const omitKeys = ['dest', 'src', 'suffix', 'entries', 'entry', 'output', 'outputs'];
 
 function task(entry, entryConfig, cb) {
   rollup(Object.assign(_.omit(entryConfig, omitKeys), {
@@ -58,10 +58,8 @@ function task(entry, entryConfig, cb) {
       gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(entryConfig.output)}.`);
 
       bundle.write(Object.assign({
-        // moduleName: output,
         dest: p.join(entryConfig.dest, entryConfig.output),
-      // }, _.omit(entryConfig, omitKeys.slice(1))));
-      }, _.omit(config, 'suffix', 'dest', 'entries', 'entry', 'outputs')));
+      }, _.omit(config, omitKeys)));
 
       cb();
     })
