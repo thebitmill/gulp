@@ -8,15 +8,25 @@ const fs = require('fs');
 const port = fs.existsSync(p.join(PWD, 'server/config/port.js')) ?
   require(p.join(PWD, 'server/config/port')) : null;
 
-const babelrc = JSON.parse(fs.readFileSync(p.join(PWD, '.babelrc')));
-
 const suffix = `-${Date.now().toString(16)}`;
 
 module.exports = {
   babel: {
     src: 'client/**/*.{js,jsx}',
     dest: 'build',
-    babel: babelrc.env['node-jsx'],
+    presets: ['es2015-node6'],
+    plugins: [
+      'add-module-exports',
+      ['transform-react-jsx', { pragma: 'h' }],
+      ['module-resolver', {
+        alias: {
+          'easy-tz': 'easy-tz/cjs',
+          lowline: 'lodash',
+          'mini-qs': 'querystring',
+          preact: 'jsx-node',
+        },
+      }],
+    ],
   },
 
   browserSync: {
@@ -93,7 +103,17 @@ module.exports = {
   rollup: {
     suffix,
     plugins: {
-      babel: babelrc.env.rollup,
+      babel: {
+        include: [
+          'node_modules/preact/**',
+          'client/**',
+        ],
+        presets: ['es2015-rollup'],
+        plugins: [
+          ['transform-react-jsx', { pragma: 'h' }],
+        ],
+      },
+
       replace: {
         'process.env.NODE_ENV': JSON.stringify(ENV),
       },
