@@ -106,6 +106,7 @@ module.exports = {
       babel: {
         include: [
           'node_modules/preact/**',
+          'node_modules/comkit-preact/**',
           'client/**',
         ],
         presets: ['es2015-rollup'],
