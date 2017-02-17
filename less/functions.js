@@ -31,6 +31,24 @@ module.exports = {
     return new tree.URL(new tree.Quoted('"', p.join('/img', value.value)), this.index, this.currentFileInfo);
   },
 
+  em(value) {
+    const tree = this.context.pluginManager.less.tree;
+
+    const baseFontSize = getVariable(this.context.frames);
+
+    if (value.type === 'Expression') {
+      return new tree.Expression(value.value.map((v) => {
+        if (v.unit.backupUnit === 'px') {
+          return new tree.Dimension(v.value / baseFontSize, 'em');
+        }
+
+        return new tree.Dimension(v.value, 'em');
+      }));
+    }
+
+    return new tree.Dimension(value.value / baseFontSize, 'em');
+  },
+
   rem(value) {
     const tree = this.context.pluginManager.less.tree;
 
