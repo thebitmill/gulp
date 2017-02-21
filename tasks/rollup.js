@@ -2,6 +2,7 @@
 
 // modules > native
 const p = require('path');
+const fs = require('fs');
 
 // modules > 3rd party
 const _ = require('lodash');
@@ -46,6 +47,10 @@ const pluginConstructors = {
 const omitKeys = ['dest', 'src', 'suffix', 'entries', 'entry', 'output', 'outputs'];
 
 function task(entry, entryConfig, cb) {
+  if (config.suffix) {
+    fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }));
+  }
+
   rollup(Object.assign(_.omit(entryConfig, omitKeys), {
     entry: p.join(entryConfig.src, entry),
     cache: cache[entry],
@@ -75,7 +80,6 @@ function task(entry, entryConfig, cb) {
     ;
 }
 
-
 const tasks = config.entries.map((entry, index) => {
   let taskName;
   let entryConfig;
@@ -92,6 +96,12 @@ const tasks = config.entries.map((entry, index) => {
     output = (entryConfig.outputs && entryConfig.outputs[index]) || entry;
   }
 
+  if (config.suffix) {
+    const obj = p.parse(output);
+    obj.name += config.suffix;
+    delete obj.base;
+    output = p.format(obj);
+  }
 
   const plugins = _.map(entryConfig.plugins, (pluginConfig, key) => {
     if (_.isPlainObject(pluginConfig)) {
