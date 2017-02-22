@@ -109,7 +109,7 @@ module.exports = {
           'node_modules/comkit-preact/**',
           'client/**',
         ],
-        presets: ['es2015-node6', 'es2016', 'es2017', 'stage-0'],
+        presets: ['es2015-rollup', 'es2016', 'es2017', 'stage-0'],
         plugins: [
           ['transform-react-jsx', { pragma: 'h' }],
         ],
