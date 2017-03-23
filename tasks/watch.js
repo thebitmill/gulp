@@ -16,6 +16,8 @@ gulp.task(TASK_NAME, () => {
   });
 
   _.forEach(rollup.entries, (entry) => {
-    gulp.watch(`${p.resolve(rollup.src)}/**/*.{js,jsx}`, gulp.series(`rollup:${Array.isArray(entry) ? entry[0] : entry}`));
+    const filename = Array.isArray(entry) ? entry[0] : entry;
+    const dir = p.dirname(p.join(rollup.src, filename));
+    gulp.watch(`${p.resolve(dir)}/**/*.{js,jsx}`, gulp.series(`rollup:${filename}`));
   });
 });
