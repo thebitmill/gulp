@@ -1,27 +1,27 @@
-'use strict';
+'use strict'
 
-const through = require('through2');
+const through = require('through2')
 
-const mtimes = {};
+const mtimes = {}
 
-function compareLastModifiedTime(stream, cb, sourceFile) {
-  const path = sourceFile.path;
+function compareLastModifiedTime (stream, cb, sourceFile) {
+  const path = sourceFile.path
 
-  const mtime = mtimes[path];
+  const mtime = mtimes[path]
 
   if (!mtime || sourceFile.stat.mtime > mtime) {
-    stream.push(sourceFile);
+    stream.push(sourceFile)
 
-    mtimes[path] = sourceFile.stat.mtime;
+    mtimes[path] = sourceFile.stat.mtime
   }
 
-  return cb();
+  return cb()
 }
 
 module.exports = (opts = {}) => {
-  opts.hasChanged = opts.hasChanged || compareLastModifiedTime;
+  opts.hasChanged = opts.hasChanged || compareLastModifiedTime
 
   return through.obj(function (file, enc, cb) {
-    opts.hasChanged(this, cb, file);
-  });
-};
+    opts.hasChanged(this, cb, file)
+  })
+}
