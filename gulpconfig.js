@@ -24,10 +24,10 @@ module.exports = {
           'easy-tz': 'easy-tz/cjs',
           lowline: 'lodash',
           'mini-qs': 'querystring',
-          preact: 'jsx-node'
-        }
-      }]
-    ]
+          preact: 'jsx-node',
+        },
+      }],
+    ],
   },
 
   browserSync: {
@@ -36,33 +36,33 @@ module.exports = {
     proxy: `localhost:${port || 3000}`,
     port: 1337,
     ui: {
-      port: 1338
+      port: 1338,
     },
     files: [
       p.join(projectRoot, 'public/css/**/*.css'),
-      p.join(projectRoot, 'public/js/**/*.js')
-    ]
+      p.join(projectRoot, 'public/js/**/*.js'),
+    ],
   },
 
   less: {
     suffix,
     src: [
-      p.join(projectRoot, 'assets/less/*.less')
+      p.join(projectRoot, 'assets/less/*.less'),
     ],
     dest: p.join(projectRoot, 'public/css'),
     functions: require(p.join(process.cwd(), 'gulp/less/functions')),
     options: {
       paths: [
-        p.join(projectRoot, 'node_modules/spineless/less')
-      ]
-    }
+        p.join(projectRoot, 'node_modules/spineless/less'),
+      ],
+    },
   },
 
   nodemon: {
     ext: 'js,jsx,marko',
     ignore: '*.marko.js',
     watch: [
-      'server'
+      'server',
     ],
     script: fs.existsSync(p.join(projectRoot, 'package.json')) ? require(p.join(projectRoot, 'package.json')).main.replace(/^\./, projectRoot) : 'server/server.js',
     env: {
@@ -76,9 +76,9 @@ module.exports = {
       // needed to force chalk to use when running gulp nodemon tasks.
       FORCE_COLOR: true,
       projectRoot,
-      NODE_ENV: process.env.NODE_ENV
+      NODE_ENV: process.env.NODE_ENV,
       // DEBUG: 'midwest:*'
-    }
+    },
   },
 
   postcss: {
@@ -90,15 +90,15 @@ module.exports = {
         'opera >= 12.1',
         'firefox >= 17',
         'chrome >= 30',
-        'android >= 4'
+        'android >= 4',
       ],
-      cascade: true
-    }
+      cascade: true,
+    },
   },
 
   raster: {
     src: p.join(projectRoot, 'assets/raster/**/*.{png,gif,jpg}'),
-    dest: p.join(projectRoot, 'public/img')
+    dest: p.join(projectRoot, 'public/img'),
   },
 
   rollup: {
@@ -108,51 +108,51 @@ module.exports = {
         include: [
           'node_modules/preact/**',
           'node_modules/comkit-preact/**',
-          'client/**'
+          'client/**',
         ],
         presets: ['es2015-rollup', 'es2016', 'es2017', 'stage-0'],
         plugins: [
-          ['transform-react-jsx', { pragma: 'h' }]
-        ]
+          ['transform-react-jsx', { pragma: 'h' }],
+        ],
       },
 
       replace: {
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       },
 
       nodeResolve: {
-        jsnext: true,  // Default: false
-        main: true,  // Default: true
-        browser: true,  // Default: false
+        jsnext: true, // Default: false
+        main: true, // Default: true
+        browser: true, // Default: false
         preferBuiltins: false,
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx'],
       },
 
       commonjs: {
         include: [
-          p.join(projectRoot, 'node_modules/**')
+          p.join(projectRoot, 'node_modules/**'),
         ],
         exclude: [
           p.join(projectRoot, 'node_modules/lodash-es/**'),
-          p.join(projectRoot, 'node_modules/symbol-observable/**')
+          p.join(projectRoot, 'node_modules/symbol-observable/**'),
         ],
         extensions: ['.js'],
-        sourceMap: true,  // Default: true
+        sourceMap: true, // Default: true
         namedExports: {
-          'node_modules/react/react.js': ['Component', 'Children', 'PropTypes', 'createElement']
-        }
-      }
+          'node_modules/react/react.js': ['Component', 'Children', 'PropTypes', 'createElement'],
+        },
+      },
     },
     sourceMap: true,
     src: p.join(projectRoot, 'client'),
     dest: p.join(projectRoot, 'public/js'),
     entries: [
-      'app.js'
+      'app.js',
     ],
     outputs: [
-      'app.js'
+      'app.js',
     ],
-    format: 'iife'
+    format: 'iife',
   },
 
   sass: {
@@ -164,42 +164,42 @@ module.exports = {
       includePaths: [
         p.join(projectRoot, 'node_modules/spysass/sass'),
         p.join(projectRoot, 'node_modules/susy/sass'),
-        p.join(projectRoot, 'node_modules/breakpoint-sass/sass')
+        p.join(projectRoot, 'node_modules/breakpoint-sass/sass'),
       ],
-      imagePath: '../img'
-    }
+      imagePath: '../img',
+    },
   },
 
   static: {
     src: p.join(projectRoot, 'assets/static/**/*'),
-    dest: p.join(projectRoot, 'public')
+    dest: p.join(projectRoot, 'public'),
   },
 
   svg: {
     src: p.join(projectRoot, 'assets/svg/**/*.svg'),
-    dest: p.join(projectRoot, 'public/img')
+    dest: p.join(projectRoot, 'public/img'),
   },
 
   tasks: {
     development: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg', 'video'], ['nodemon'], ['watch', 'browser-sync']],
     staging: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg', 'video']],
-    production: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg', 'video']]
+    production: ['wipe', ['babel', 'raster', 'less', 'rollup', 'static', 'svg', 'video']],
   }[process.env.NODE_ENV],
 
   video: {
     src: p.join(projectRoot, 'assets/video/**/*'),
-    dest: p.join(projectRoot, 'public/video')
+    dest: p.join(projectRoot, 'public/video'),
   },
 
   watch: {
     babel: p.join(projectRoot, 'client/**/*.{js,jsx}'),
-    less: p.join(projectRoot, 'assets/less/**/*.less')
+    less: p.join(projectRoot, 'assets/less/**/*.less'),
   },
 
   wipe: {
     src: [
       p.join(projectRoot, 'build'),
-      p.join(projectRoot, 'public')
-    ]
-  }
+      p.join(projectRoot, 'public'),
+    ],
+  },
 }

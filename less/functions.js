@@ -87,5 +87,5 @@ module.exports = {
     }
 
     return new tree.Dimension(value.value * baseFontSize, 'px')
-  }
+  },
 }

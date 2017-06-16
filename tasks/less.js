@@ -18,7 +18,7 @@ const errorHandler = require('../util/error-handler')
 lessModule.functions.functionRegistry.addMultiple(config.functions)
 
 const processors = [
-  autoprefixer(config.autoprefixer)
+  autoprefixer(config.autoprefixer),
 ]
 
 if (process.env.NODE_ENV === 'production') {

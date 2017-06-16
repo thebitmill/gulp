@@ -34,7 +34,7 @@ function sassErrorHandler (err) {
 }
 
 const processors = [
-  autoprefixer(postcssConfig.autoprefixer)
+  autoprefixer(postcssConfig.autoprefixer),
 ]
 
 if (process.env.NODE_ENV === 'production') {

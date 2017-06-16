@@ -40,7 +40,7 @@ const pluginConstructors = {
   babel: require('rollup-plugin-babel'),
   commonjs: require('rollup-plugin-commonjs'),
   nodeResolve: require('rollup-plugin-node-resolve'),
-  replace: require('rollup-plugin-replace')
+  replace: require('rollup-plugin-replace'),
 }
 
 const omitKeys = ['dest', 'src', 'suffix', 'entries', 'entry', 'output', 'outputs']
@@ -52,7 +52,7 @@ function task (entry, entryConfig, cb) {
 
   rollup(Object.assign(_.omit(entryConfig, omitKeys), {
     entry: p.join(entryConfig.src, entry),
-    cache: cache[entry]
+    cache: cache[entry],
   }))
     .then((bundle) => {
       cache[entry] = bundle
@@ -62,14 +62,14 @@ function task (entry, entryConfig, cb) {
       gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(entryConfig.output)}.`)
 
       bundle.write(Object.assign({
-        dest: p.join(entryConfig.dest, entryConfig.output)
+        dest: p.join(entryConfig.dest, entryConfig.output),
       }, _.omit(config, omitKeys)))
 
       cb()
     })
     .catch((err) => {
       err = Object.assign(serializeError(err), {
-        task: `${TASK_NAME}:${entry}`
+        task: `${TASK_NAME}:${entry}`,
       })
 
       errorHandler(err)
