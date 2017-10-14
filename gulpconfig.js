@@ -143,7 +143,7 @@ module.exports = {
         },
       },
     },
-    sourceMap: true,
+    sourcemap: true,
     src: p.join(projectRoot, 'client'),
     dest: p.join(projectRoot, 'public/js'),
     entries: [
