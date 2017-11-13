@@ -139,7 +139,7 @@ module.exports = {
         extensions: ['.js'],
         sourceMap: true, // Default: true
         namedExports: {
-          'node_modules/react/react.js': ['Component', 'Children', 'PropTypes', 'createElement'],
+          'node_modules/react/index.js': ['Component', 'Children', 'PropTypes', 'createElement'],
         },
       },
     },
