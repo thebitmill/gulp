@@ -15,9 +15,8 @@ module.exports = {
   babel: {
     src: 'client/**/*.{js,jsx}',
     dest: 'build',
-    presets: ['es2015-node6', 'es2016', 'es2017', 'stage-0'],
+    presets: [['env', { target: { node: 'current' } }]],
     plugins: [
-      'add-module-exports',
       ['transform-react-jsx', { pragma: 'h' }],
       ['module-resolver', {
         alias: {
@@ -95,7 +94,7 @@ module.exports = {
           'node_modules/comkit-preact/**',
           'client/**',
         ],
-        presets: ['es2015-rollup', 'es2016', 'es2017', 'stage-0'],
+        presets: ['env', { modules: false }],
         plugins: [
           ['transform-react-jsx', { pragma: 'h' }],
         ],
