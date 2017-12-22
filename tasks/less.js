@@ -18,13 +18,13 @@ const errorHandler = require('../util/error-handler')
 lessModule.functions.functionRegistry.addMultiple(config.functions)
 
 const processors = [
-  autoprefixer(config.autoprefixer),
+  autoprefixer(),
 ]
 
 if (process.env.NODE_ENV === 'production') {
   const csswring = require('csswring')
 
-  processors.push(csswring(config.csswring))
+  processors.push(csswring())
 }
 
 gulp.task('less', () => {

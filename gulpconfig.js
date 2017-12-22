@@ -81,21 +81,6 @@ module.exports = {
     },
   },
 
-  postcss: {
-    autoprefixer: {
-      browsers: [
-        'safari >= 5',
-        'ie >= 8',
-        'ios >= 6',
-        'opera >= 12.1',
-        'firefox >= 17',
-        'chrome >= 30',
-        'android >= 4',
-      ],
-      cascade: true,
-    },
-  },
-
   raster: {
     src: p.join(projectRoot, 'assets/raster/**/*.{png,gif,jpg}'),
     dest: p.join(projectRoot, 'public/img'),
