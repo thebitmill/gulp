@@ -15,9 +15,12 @@ module.exports = {
   babel: {
     src: 'client/**/*.{js,jsx}',
     dest: 'build',
-    presets: [['env', { target: { node: 'current' } }]],
+    presets: [
+      ['@babel/env', { targets: { node: 'current' }, shippedProposals: true }],
+    ],
     plugins: [
-      ['transform-react-jsx', { pragma: 'h' }],
+      ['@babel/transform-react-jsx', { pragma: 'h' }],
+      'add-module-exports',
       ['module-resolver', {
         alias: {
           'easy-tz': 'easy-tz/cjs',
@@ -94,9 +97,11 @@ module.exports = {
           'node_modules/comkit-preact/**',
           'client/**',
         ],
-        presets: ['env', { modules: false }],
+        presets: [
+          ['@babel/env', { modules: false, shippedProposals: true }],
+        ],
         plugins: [
-          ['transform-react-jsx', { pragma: 'h' }],
+          ['@babel/transform-react-jsx', { pragma: 'h' }],
         ],
       },
 
