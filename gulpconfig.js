@@ -121,11 +121,17 @@ module.exports = {
       },
 
       nodeResolve: {
+        module: true, // Default: true
         jsnext: true, // Default: false
         main: true, // Default: true
         browser: true, // Default: false
         preferBuiltins: false,
         extensions: ['.js', '.jsx'],
+        customResolveOptions: {
+          // this option is set to ensure symlinked packages still resolve
+          // packages in projects node_modules
+          moduleDirectory: p.join(process.cwd(), 'node_modules'),
+        },
       },
 
       commonjs: {
