@@ -24,13 +24,13 @@ const TASK_NAME = 'rollup'
 
 const cache = {}
 
-config.entries = config.entries || [config.entry]
+config.inputs = config.inputs || [config.input]
 
 /* TODO only rebuild changed bundle when watching.
  * should probably be done with gulp.watch(pattern, (file) => {})
  *
  * if (file && !_.isEmpty(cache)) {
- *  const filesInBundle = cache[].modules.map(entry => entry.id)
+ *  const filesInBundle = cache[].modules.map(input => input.id)
  *  if (filesInBundle.includes(file)) etc etc
  * }
  */
@@ -43,33 +43,41 @@ const pluginConstructors = {
   replace: require('rollup-plugin-replace'),
 }
 
-const omitKeys = ['dest', 'src', 'suffix', 'entries', 'entry', 'output', 'outputs']
+const omitKeys = [
+  'dest',
+  'src',
+  'suffix',
+  'inputs',
+  'input',
+  'output',
+  'outputs',
+]
 
-function task (entry, entryConfig, cb) {
+function task (input, inputConfig, cb) {
   if (config.suffix) {
     fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }))
   }
 
-  rollup(Object.assign(_.omit(entryConfig, omitKeys), {
-    entry: p.join(entryConfig.src, entry),
-    cache: cache[entry],
+  rollup(Object.assign(_.omit(inputConfig, omitKeys), {
+    input: p.join(inputConfig.src, input),
+    cache: cache[input],
   }))
     .then((bundle) => {
-      cache[entry] = bundle
+      cache[input] = bundle
 
       const count = bundle.modules.filter((module) => !module.id.startsWith('\u0000commonjs-proxy')).length
 
-      gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(entryConfig.output)}.`)
+      gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(inputConfig.output)}.`)
 
       bundle.write(Object.assign({
-        dest: p.join(entryConfig.dest, entryConfig.output),
+        file: p.join(inputConfig.dest, inputConfig.output),
       }, _.omit(config, omitKeys)))
 
       cb()
     })
     .catch((err) => {
       err = Object.assign(serializeError(err), {
-        task: `${TASK_NAME}:${entry}`,
+        task: `${TASK_NAME}:${input}`,
       })
 
       errorHandler(err)
@@ -78,20 +86,20 @@ function task (entry, entryConfig, cb) {
     })
 }
 
-const tasks = config.entries.map((entry, index) => {
+const tasks = config.inputs.map((input, index) => {
   let taskName
-  let entryConfig
+  let inputConfig
   let output
 
-  if (Array.isArray(entry)) {
-    taskName = `${TASK_NAME}:${entry[0]}`
-    output = (entry[1].output || (config.outputs && config.outputs[index])) || entry[0]
-    entryConfig = _.mergeWith(_.omit(config, ['entries', 'outputs']), entry[1], (a, b) => (Array.isArray(a) ? b : undefined))
-    entry = entry[0]
+  if (Array.isArray(input)) {
+    taskName = `${TASK_NAME}:${input[0]}`
+    output = (input[1].output || (config.outputs && config.outputs[index])) || input[0]
+    inputConfig = _.mergeWith(_.omit(config, ['inputs', 'outputs']), input[1], (a, b) => (Array.isArray(a) ? b : undefined))
+    input = input[0]
   } else {
-    taskName = `${TASK_NAME}:${entry}`
-    entryConfig = config
-    output = (entryConfig.outputs && entryConfig.outputs[index]) || entry
+    taskName = `${TASK_NAME}:${input}`
+    inputConfig = config
+    output = (inputConfig.outputs && inputConfig.outputs[index]) || input
   }
 
   if (config.suffix) {
@@ -101,7 +109,7 @@ const tasks = config.entries.map((entry, index) => {
     output = p.format(obj)
   }
 
-  const plugins = _.map(entryConfig.plugins, (pluginConfig, key) => {
+  const plugins = _.map(inputConfig.plugins, (pluginConfig, key) => {
     if (_.isPlainObject(pluginConfig)) {
       if (!pluginConstructors[key]) {
         throw new Error(`Unknown plugin "${key}"`)
@@ -114,7 +122,7 @@ const tasks = config.entries.map((entry, index) => {
     return pluginConfig
   })
 
-  gulp.task(taskName, task.bind(null, entry, Object.assign({}, entryConfig, { plugins, output })))
+  gulp.task(taskName, task.bind(null, input, Object.assign({}, inputConfig, { plugins, output })))
 
   return taskName
 })

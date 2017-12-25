@@ -141,8 +141,8 @@ module.exports = {
     sourcemap: true,
     src: p.join(projectRoot, 'client'),
     dest: p.join(projectRoot, 'public/js'),
-    entries: [
-      'app.js',
+    inputs: [
+      'client/app.js',
     ],
     outputs: [
       'app.js',
