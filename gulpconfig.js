@@ -138,7 +138,6 @@ module.exports = {
         },
       },
     },
-    sourcemap: true,
     src: p.join(projectRoot, 'client'),
     dest: p.join(projectRoot, 'public/js'),
     inputs: [
@@ -147,7 +146,10 @@ module.exports = {
     outputs: [
       'app.js',
     ],
-    format: 'iife',
+    output: {
+      sourcemap: true,
+      format: 'iife',
+    },
   },
 
   sass: {

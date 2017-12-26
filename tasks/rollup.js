@@ -35,49 +35,43 @@ config.inputs = config.inputs || [config.input]
  * }
  */
 
-// modules > rollup
-const pluginConstructors = {
-  babel: require('rollup-plugin-babel'),
-  commonjs: require('rollup-plugin-commonjs'),
-  nodeResolve: require('rollup-plugin-node-resolve'),
-  replace: require('rollup-plugin-replace'),
-}
-
 const omitKeys = [
   'dest',
+  'entries',
+  // 'input',
+  'inputs',
+  'merge',
+  // 'output',
+  'outputs',
   'src',
   'suffix',
-  'inputs',
-  'input',
-  'output',
-  'outputs',
 ]
 
-function task (input, inputConfig, cb) {
-  if (config.suffix) {
-    fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }))
-  }
+function task (entry, cb) {
+  // if (config.suffix) {
+  //   fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }), (err) => err && console.error(err))
+  // }
 
-  rollup(Object.assign(_.omit(inputConfig, omitKeys), {
-    input: p.join(inputConfig.src, input),
-    cache: cache[input],
+  rollup(Object.assign(_.omit(entry, omitKeys), {
+    cache: cache[entry.input],
   }))
     .then((bundle) => {
-      cache[input] = bundle
+      cache[entry.input] = bundle
 
       const count = bundle.modules.filter((module) => !module.id.startsWith('\u0000commonjs-proxy')).length
 
-      gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(inputConfig.output)}.`)
+      bundle.write(entry.output)
+      // bundle.write(Object.assign(_.omit(config, omitKeys), {
+      //   file: entry.output.file,
+      // }))
 
-      bundle.write(Object.assign({
-        file: p.join(inputConfig.dest, inputConfig.output),
-      }, _.omit(config, omitKeys)))
+      gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(entry.output.file)}.`)
 
       cb()
     })
     .catch((err) => {
       err = Object.assign(serializeError(err), {
-        task: `${TASK_NAME}:${input}`,
+        task: `${TASK_NAME}:${entry.input}`,
       })
 
       errorHandler(err)
@@ -86,45 +80,71 @@ function task (input, inputConfig, cb) {
     })
 }
 
-const tasks = config.inputs.map((input, index) => {
-  let taskName
-  let inputConfig
-  let output
-
-  if (Array.isArray(input)) {
-    taskName = `${TASK_NAME}:${input[0]}`
-    output = (input[1].output || (config.outputs && config.outputs[index])) || input[0]
-    inputConfig = _.mergeWith(_.omit(config, ['inputs', 'outputs']), input[1], (a, b) => (Array.isArray(a) ? b : undefined))
-    input = input[0]
-  } else {
-    taskName = `${TASK_NAME}:${input}`
-    inputConfig = config
-    output = (inputConfig.outputs && inputConfig.outputs[index]) || input
+function createTask (entry) {
+  if (entry.merge && !Array.isArray(config)) {
+    entry = _.mergeWith({}, _.omit(config, [ 'entries', 'input', 'inputs', 'file', 'outputs' ]), entry, (a, b) => (Array.isArray(a) ? b : undefined))
   }
 
-  if (config.suffix) {
-    const obj = p.parse(output)
-    obj.name += config.suffix
-    delete obj.base
-    output = p.format(obj)
-  }
+  // initialize all plugins. if the plugins property is an array, the plugins have already been initialized.
+  const plugins = Array.isArray(entry.plugins) ? entry.plugins : _.map(entry.plugins, (pluginConfig, pluginName) => {
+    pluginName = _.kebabCase(pluginName)
 
-  const plugins = _.map(inputConfig.plugins, (pluginConfig, key) => {
     if (_.isPlainObject(pluginConfig)) {
-      if (!pluginConstructors[key]) {
-        throw new Error(`Unknown plugin "${key}"`)
+      let plugin
+
+      try {
+        plugin = require(pluginName)
+      } catch (e) {
+        try {
+          plugin = require(`rollup-plugin-${pluginName}`)
+        } catch (e) {
+          throw new Error(`Unknown plugin "${pluginName}"`)
+        }
       }
 
-      return pluginConstructors[key](pluginConfig)
+      return plugin(pluginConfig)
     }
 
-    // assuming pluginConfig is actually an initialized plugin
+    // if not a plainObject, assume pluginConfig is actually an initialized plugin
     return pluginConfig
   })
 
-  gulp.task(taskName, task.bind(null, input, Object.assign({}, inputConfig, { plugins, output })))
+  if (Array.isArray(entry.inputs)) {
+    return entry.inputs.map((input, i) => {
+      if (!entry.outputs || !entry.outputs[i]) {
+        throw new Error(`Output file not defined for "${input}"`)
+      }
+
+      const output = Object.assign({
+        file: entry.outputs[i],
+      }, entry.output)
+
+      return createTask(Object.assign({}, _.omit(entry, [ 'entries', 'inputs', 'outputs', 'merge' ]), { input, output, plugins }))
+    })
+  }
+
+  let input = entry.input
+  let file = entry.file || entry.output.file
+
+  if (entry.src || config.src) {
+    input = p.join(entry.src || config.src, input)
+  }
+
+  if (entry.dest || config.dest) {
+    file = p.join(entry.dest || config.dest, file)
+  }
+
+  const output = Object.assign({}, entry.output, { file })
+
+  let taskName = `${TASK_NAME}:${entry.input}`
+
+  gulp.task(taskName, task.bind(null, Object.assign({}, entry, { plugins, file: undefined, input, output })))
 
   return taskName
-})
+}
 
-gulp.task(TASK_NAME, gulp.parallel(tasks))
+let entries = Array.isArray(config) ? config : config.entries || [ config ]
+
+const tasks = entries.map(createTask)
+
+gulp.task(TASK_NAME, gulp.parallel(_.flatten(tasks)))
