@@ -115,7 +115,7 @@ module.exports = {
         main: true, // Default: true
         browser: true, // Default: false
         preferBuiltins: false,
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.mjs'],
         customResolveOptions: {
           // this option is set to ensure symlinked packages still resolve
           // packages in projects node_modules
