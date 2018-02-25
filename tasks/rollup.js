@@ -60,14 +60,14 @@ function task (entry, cb) {
 
       const count = bundle.modules.filter((module) => !module.id.startsWith('\u0000commonjs-proxy')).length
 
-      bundle.write(entry.output)
+      bundle.write(entry.output).then(() => {
+        gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(entry.output.file)}.`)
+
+        cb()
+      })
       // bundle.write(Object.assign(_.omit(config, omitKeys), {
       //   file: entry.output.file,
       // }))
-
-      gutil.log(`${chalk.cyan(TASK_NAME)} bundled ${chalk.blue(count)} files into ${chalk.magenta(entry.output.file)}.`)
-
-      cb()
     })
     .catch((err) => {
       err = Object.assign(serializeError(err), {
