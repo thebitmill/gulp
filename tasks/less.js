@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 gulp.task('less', () => {
-  mkdirp(config.dest)
+  mkdirp.sync(config.dest)
 
   if (config.suffix) {
     fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }))
