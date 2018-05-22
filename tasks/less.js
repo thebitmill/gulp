@@ -31,7 +31,7 @@ gulp.task('less', () => {
   mkdirp.sync(config.dest)
 
   if (config.suffix) {
-    fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }))
+    fs.writeFileSync(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }))
   }
 
   let pipe = gulp.src(config.src)
