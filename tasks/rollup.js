@@ -65,9 +65,6 @@ function task (entry, cb) {
 
         cb()
       })
-      // bundle.write(Object.assign(_.omit(config, omitKeys), {
-      //   file: entry.output.file,
-      // }))
     })
     .catch((err) => {
       err = Object.assign(serializeError(err), {
@@ -124,21 +121,10 @@ function createTask (entry) {
   }
 
   let input = entry.input
-  let file = entry.file || entry.output.file
-
-  if (entry.src || config.src) {
-    input = p.join(entry.src || config.src, input)
-  }
-
-  if (entry.dest || config.dest) {
-    file = p.join(entry.dest || config.dest, file)
-  }
-
-  const output = Object.assign({}, entry.output, { file })
 
   let taskName = `${TASK_NAME}:${entry.input}`
 
-  gulp.task(taskName, task.bind(null, Object.assign({}, entry, { plugins, file: undefined, input, output })))
+  gulp.task(taskName, task.bind(null, Object.assign({}, entry, { plugins, input })))
 
   return taskName
 }
