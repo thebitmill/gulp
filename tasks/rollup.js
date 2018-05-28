@@ -121,10 +121,21 @@ function createTask (entry) {
   }
 
   let input = entry.input
+  let file = entry.file || entry.output.file
+
+  if (entry.src || config.src) {
+    input = p.join(entry.src || config.src, input)
+  }
+
+  if (entry.dest || config.dest) {
+    file = p.join(entry.dest || config.dest, file)
+  }
+
+  const output = Object.assign({}, entry.output, { file })
 
   let taskName = `${TASK_NAME}:${entry.input}`
 
-  gulp.task(taskName, task.bind(null, Object.assign({}, entry, { plugins, input })))
+  gulp.task(taskName, task.bind(null, Object.assign({}, entry, { plugins, input, output })))
 
   return taskName
 }
