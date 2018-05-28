@@ -48,9 +48,9 @@ const omitKeys = [
 ]
 
 function task (entry, cb) {
-  // if (config.suffix) {
-  //   fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: config.suffix }), (err) => err && console.error(err))
-  // }
+  if (entry.suffix) {
+    fs.writeFile(`${config.dest}.json`, JSON.stringify({ suffix: entry.suffix }), (err) => err && console.error(err))
+  }
 
   rollup(Object.assign(_.omit(entry, omitKeys), {
     cache: cache[entry.input],
@@ -122,6 +122,12 @@ function createTask (entry) {
 
   let input = entry.input
   let file = entry.file || entry.output.file
+
+  if (entry.suffix || config.suffix) {
+    const obj = p.parse(file)
+
+    file = `${obj.dir}/${obj.name}${config.suffix || entry.suffix}${obj.ext}`
+  }
 
   if (entry.src || config.src) {
     input = p.join(entry.src || config.src, input)
